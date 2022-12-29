@@ -1,12 +1,16 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const BookMark = ({ status, ...rest }) => {
-  return (
-    //тернарник на добавление закрашенной или не закрашенной иконки в зависимости от статуса TRUE or FALSE
-    <button {...rest}>
-      <i className={"bi bi-bookmark" + (status ? "-fill" : "")}></i>
-    </button>
-  );
+    return (
+        <button {...rest}>
+            <i className={"bi bi-bookmark" + (status ? "-fill" : "")}></i>
+        </button>
+    );
+};
+
+BookMark.propTypes = {
+    status: PropTypes.bool.isRequired
 };
 
 export default BookMark;
