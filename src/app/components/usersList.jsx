@@ -13,6 +13,7 @@ const UsersList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfession] = useState();
     const [selectedProf, setSelectedProf] = useState();
+    const [search, setSearch] = useState("");
     const [sortBy, setSortBy] = useState({ path: "", order: "asc" }); // path: "name", чтобы отображалась стрелочка
 
     const [users, setUsers] = useState();
@@ -39,9 +40,10 @@ const UsersList = () => {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedProf]);
+    }, [selectedProf, search]);
 
     const handleProfessionSelect = (item) => {
+        if (search) setSearch("");
         setSelectedProf(item);
     };
 
@@ -53,8 +55,21 @@ const UsersList = () => {
         setSortBy(item);
     };
 
+    const handleSearch = (e) => {
+        setSelectedProf(null);
+        const { target } = e;
+        setSearch(target.value);
+    };
+
     if (users) {
-        const filteredUsers = selectedProf // сравнила объекты по соджержанию в них строк, иначе выдает "НИКТО С ТОБОЙ НЕ ТУСАНЕТ"
+        const filteredUsers = search
+            ? users.filter(
+                  (user) =>
+                      user.name
+                          .toLowerCase()
+                          .indexOf(search.toLowerCase().trim()) !== -1
+              )
+            : selectedProf // сравнила объекты по соджержанию в них строк, иначе выдает "НИКТО С ТОБОЙ НЕ ТУСАНЕТ"
             ? users.filter(
                   (user) =>
                       JSON.stringify(user.profession) ===
@@ -93,6 +108,13 @@ const UsersList = () => {
 
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Поиск"
+                        onChange={handleSearch}
+                        value={search}
+                    ></input>
                     {count > 0 && (
                         <UserTable
                             users={userCrop}
@@ -118,7 +140,8 @@ const UsersList = () => {
 };
 
 UsersList.propTypes = {
-    users: PropTypes.array.isRequired
+    users: PropTypes.array
+    // users: PropTypes.array.isRequired
 };
 
 export default UsersList;
